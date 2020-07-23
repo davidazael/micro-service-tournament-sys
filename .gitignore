@@ -1,5 +1,5 @@
 /.vscode 
-**/Dockerfile
+**/.dockerignore 
 
 /index.md
 /micro-service_templates

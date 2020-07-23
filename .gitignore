@@ -1,0 +1,22 @@
+/.vscode 
+
+/index.md
+/micro-service_templates
+/authentication
+/client_stiching
+
+
+**/__pycache__/**
+
+*.json
+
+# Flask 
+instance/
+
+# Environments
+*.env
+*.venv
+env/
+
+# Database
+db.sqlite3

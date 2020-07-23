@@ -6,6 +6,7 @@
 /authentication
 /client_stiching
 
+*.sh
 
 **/__pycache__/**
 
@@ -21,3 +22,4 @@ env/
 
 # Database
 db.sqlite3
+*.db

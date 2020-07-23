@@ -1,0 +1,41 @@
+version: "3.7"
+
+
+services:
+
+  association:
+    build: ./association_tourneys_users
+    container_name: association
+    volumes:
+      - type: bind
+        source: ./association_tourneys_users/
+        target: /src
+    environment:
+      - APP_NAME:association_api
+
+  tourneycrud:
+    build: ./tournaments_crud
+    container_name: tournaments_crud
+    volumes:
+      - type: bind
+        source: ./tournaments_crud/
+        target: /src
+    environment:
+      - APP_NAME:tourney_crud_api
+
+  usercrud:
+    build: ./users_crud
+    container_name: users_crud
+    volumes:
+      - type: bind
+        source: ./users_crud/
+        target: /src
+    environment:
+      - APP_NAME=users_crud_api
+    
+  apigateway:
+    build: ./api_gateway
+    container_name: api_gateway
+    ports:
+      - 80:80
+      - 443:443

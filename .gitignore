@@ -1,4 +1,5 @@
 /.vscode 
+**/Dockerfile
 
 /index.md
 /micro-service_templates

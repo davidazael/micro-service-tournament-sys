@@ -1,21 +1,101 @@
 import copy
 import json
 import requests
+import collections
 from graphql_relay.node.node import from_global_id
-from collections import namedtuple
+from graphql.execution.base import collect_fields
+from graphql.utils.ast_to_dict import ast_to_dict
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 
+def my_get_fields(info):
+    prev_fragment_names = set()
+    params = collections.defaultdict(list)
+    params = collect_fields(info.context,
+            info.parent_type,
+            info.field_asts[0].selection_set,
+            params,
+            prev_fragment_names)
+    params = collect_fields(info.context,
+            info.parent_type,
+            params['edges'][0].selection_set,
+            params,
+            prev_fragment_names)
+    params = collect_fields(info.context,
+            info.parent_type,
+            params['node'][0].selection_set,
+            params,
+            prev_fragment_names)
+    return set(params)
+
+
+def get_fields(info):
+    prev_fragment_names = set()
+    params = collections.defaultdict(list)
+    params = collect_fields(info.context,
+            info.parent_type,
+            info.field_asts[0].selection_set,
+            params,
+            prev_fragment_names)
+    prev_fragment_names = set(params.keys())
+    for fragment_name in prev_fragment_names:
+        params = collect_fields(info.context,
+                info.parent_type,
+                params[fragment_name][0].selection_set,
+                params,
+                prev_fragment_names)
+        prev_fragment_names = set(params.keys())
+
+    return set(params)
+
+def test_collect_fields(node, fragments):
+    """Recursively collects fields from the AST
+    Args:
+        node (dict): A node in the AST
+        fragments (dict): Fragment definitions
+    Returns:
+        A dict mapping each field found, along with their sub fields.
+        {'name': {},
+         'sentimentsPerLanguage': {'id': {},
+                                   'name': {},
+                                   'totalSentiments': {}},
+         'slug': {}}
+    """
+    field = {}
+
+    if node.get('selection_set'):
+        for leaf in node['selection_set']['selections']:
+            if leaf['kind'] == 'Field':
+                field.update({
+                    leaf['name']['value']: test_collect_fields(leaf, fragments)
+                })
+            elif leaf['kind'] == 'FragmentSpread':
+                field.update(test_collect_fields(fragments[leaf['name']['value']],
+                                            fragments))
+
+    return field
+
+
+def test(info):
+    """A convenience function to call collect_fields with info
+    Args:
+        info (ResolveInfo)
+    Returns:
+        dict: Returned from collect_fields
+    """
+    prev_fragment_names = set()
+    fragments = {}
+    node = ast_to_dict(info.field_asts[0])
+    for name, value in info.fragments.items():
+        fragments[name] = ast_to_dict(value)
+
+    return test_collect_fields(node, fragments)
 
 def _json_object_hook(d):
-    return namedtuple('X', d.keys())(*d.values())
+    return collections.namedtuple('X', d.keys())(*d.values())
 
 def json2obj(data):
     return json.loads(data, object_hook=_json_object_hook)
-
-def extract_nodes(info, size):
-    pass
-
 
 def input_to_dict(input):
     """ Method to convert Graphene input into dictionary."""
@@ -93,51 +173,23 @@ def get_tournament_list():
         }
     }
     """)
+    
     response = client.execute(query)
     parsed_response = response['tournamentList']
 
     return parsed_response
 
 
-
-def get_user():
-    _transport = RequestsHTTPTransport( url='http://api_gateway/users/graphql', use_json=True,)
-    client = Client( transport=_transport, fetch_schema_from_transport=False,)
-    query = gql("""
-    {
-    { user(id: \\"VXNlcjox\\"){ id name steamId created edited } } 
-    }
-    """)
-    response = client.execute(query)
-    parsed_response = response['usersList']['edges']
-    size = len(parsed_response[1].get('node'))
-    dictionary = {} 
-    dictionary = copy.deepcopy(parsed_response[0])
-
-    return dictionary
-
-
-def get_data_from_ids(input):
-    dictionary = {}
-
-    for key, value in input:
-        print(key, value)
-        if key == 'tournament_id':
-            tournament_response = request_from_tournament(value)
-        if key == 'user_id':
-            users_response = request_from_user(value)
-
-    return tournament_response, users_response
-
-
-def request_from_user(found_id):
+def requests_all_tourneys(info):
+    vals = test(info)
+    vals = set(vals['edges']['node'].keys())
     headers = {'content-type': 'application/json'}
-    base_url = 'localhost:5000/users/graphql'
-    payload = '{"query": "{tournament(tournament_id:{0.found_id}){tournament{name,owner}}}"}'.format(
-        found_id)
-    users_response = requests.post(url=base_url, headers=headers, data=payload)
-    print(users_response.json())
-    return users_response
+    base_url = 'http://api_gateway/tourneys/graphql'
+    payload = '{"query": "{tournamentList {edges {node { {} {} {} {} {} }}}}"}'.format(
+        *vals)
+    tournament_response = requests.post(url=base_url, headers=headers, data=payload)
+    parsed_response = tournament_response['tournamentList']
+    return parsed_response
 
 
 def request_from_tournament(found_id):

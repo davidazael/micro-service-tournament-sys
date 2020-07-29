@@ -9,6 +9,13 @@ from . import client
 the models itself. 
 '''
 
+class User(ObjectType):
+    id = String()
+    name = String()
+    steamId = String()
+    created = String()
+    edited = String()
+
 class Tournament(ObjectType):
     id = String()
     name = String()
@@ -16,13 +23,8 @@ class Tournament(ObjectType):
     edited = String()
     maxParticipants = Int()
     minParticipants = Int()
-
-class User(ObjectType):
-    id = String()
-    name = String()
-    steamId = String()
-    created = String()
-    edited = String()
+    # participants = graphene.Field(User)
+    participants = String()
 
 class UsersList(graphene.Connection):
     class Meta:
@@ -31,6 +33,3 @@ class UsersList(graphene.Connection):
 class TournamentList(graphene.Connection):
     class Meta:
         node = Tournament
-
-class Unite(graphene.Union):
-    pass

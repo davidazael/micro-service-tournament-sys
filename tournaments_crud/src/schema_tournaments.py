@@ -11,7 +11,8 @@ class TournamentAttribute:
     name = graphene.String(description="Name of Tournament.")
     max_participants = graphene.Int(description="Max number of participants.")
     min_participants = graphene.Int(description="Min number of participants.")
-    list_of_participants = graphene.List(description="List of Participants Global ID")
+    # list_of_participants = graphene.List(description="List of Participants Global ID")
+    participants = graphene.String(description="List of Participants Global ID")
 
 
 class Tournament(SQLAlchemyObjectType):
@@ -63,6 +64,8 @@ class UpdateTournament(graphene.Mutation):
         data['edited'] = datetime.utcnow()
 
         tournament = db_session.query(ModelTournaments).filter_by(id=data['id'])
+        tournament_row = tournament.first()
+        data['participants'] += ';' + str(tournament_row.participants)
         tournament.update(data)
         db_session.commit()
         tournament = db_session.query(ModelTournaments).filter_by(id=data['id']).first()

@@ -9,12 +9,12 @@ from . import utils
 # Create Generic class to mutualize description of User attributes for both queries.
 class UserAttribute:
     name = graphene.String(description="Name of User.")
-    first_name = graphene.String(description="First Name of User.")
-    middle_first_name = graphene.String(description="Middle Name of User.")
-    last_name = graphene.String(description="Last Name of User.")
+    # first_name = graphene.String(description="First Name of User.")
+    # middle_first_name = graphene.String(description="Middle Name of User.")
+    # last_name = graphene.String(description="Last Name of User.")
     steam_Id = graphene.Int(description="Steam ID of User.")
-    attending_tournament = graphene.List(description="List of Tournament Global IDs")
-    owner_tournament = graphene.List(description="List of Tournament Global ID as Owner")
+    # attending_tournament = graphene.List(description="List of Tournament Global IDs")
+    # owner_tournament = graphene.List(description="List of Tournament Global ID as Owner")
 
 
 class User(SQLAlchemyObjectType):

@@ -13,5 +13,6 @@ class ModelTournaments(Base):
     min_participants = Column('min_participants', Integer, default=2)
     created = Column('created', String, doc="Creation date of Tournament.")
     edited = Column('edited', String, doc="Edited date of Tournament.")
+    participants = Column('participants', String, doc="String of global IDs")
 
     UniqueConstraint(name)

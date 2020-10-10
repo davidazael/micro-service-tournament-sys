@@ -125,7 +125,15 @@ def get_user_list():
     return dictionary.values()
 
 def get_user_list_client():
-    _transport = RequestsHTTPTransport( url='http://api_gateway/users/graphql', use_json=True,)
+    app_url = 'http://api_gateway/users/graphql'
+    try:
+        import os
+        app_url = 'http://'+os.environ['URL']+'/users/graphql?'
+    except KeyError as e:
+        print("No URL Set")
+        app_url = 'http://api_gateway/users/graphql'
+
+    _transport = RequestsHTTPTransport( url=app_url, use_json=True,)
     client = Client( transport=_transport, fetch_schema_from_transport=False,)
     query = gql("""
     {
@@ -154,7 +162,15 @@ def get_user_list_client():
     return parsed_response
 
 def get_tournament_list():
-    _transport = RequestsHTTPTransport( url='http://api_gateway/tourneys/graphql', use_json=True,)
+    app_url = 'http://api_gateway/tourneys/graphql'
+    try:
+        import os
+        app_url = 'http://'+os.environ['URL']+'/tourneys/graphql?'
+    except KeyError as e:
+        print("No URL Set")
+        app_url = 'http://api_gateway/tourneys/graphql'
+
+    _transport = RequestsHTTPTransport( url=app_url, use_json=True,)
 
     client = Client( transport=_transport, fetch_schema_from_transport=False,)
 

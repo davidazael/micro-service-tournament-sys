@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tournament
+  labels:
+    app: tourney
+    type: db
+    part-of: tournament-api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: tourney
+      type: db
+      part-of: tournament-api
+  template:
+    metadata:
+      name: tournament
+      labels:
+        app: tourney
+        type: db
+        part-of: tournament-api
+    spec:
+      containers:
+        - name: tourney-api
+          image: davidazael/micro-api:tourney_api
+          imagePullPolicy: Always
+          command: ["uwsgi", "app.ini"]
+          ports:
+            - containerPort: 8000
+      imagePullSecrets:
+        - name: docker-reg

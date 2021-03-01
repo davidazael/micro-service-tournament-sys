@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-crud
+  labels:
+    app: tourney
+    type: db
+    part-of: tournament-api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: users-crud
+      type: db
+      part-of: tournament-api
+  template:
+    metadata:
+      name: users-crud
+      labels:
+        app: users-crud
+        type: db
+        part-of: tournament-api
+    spec:
+      containers:
+        - name: users-api
+          image: davidazael/micro-api:user_api
+          imagePullPolicy: Always
+          command: ["uwsgi", "app.ini"]
+          ports:
+            - containerPort: 8000
+      imagePullSecrets:
+        - name: docker-reg

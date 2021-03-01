@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: internal-lb
+  labels:
+    app: tourney
+    type: db
+    part-of: tournament-api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: internal-lb
+      type: db
+      part-of: tournament-api
+  template:
+    metadata:
+      name: internal-lb
+      labels:
+        app: internal-lb
+        type: db
+        part-of: tournament-api
+    spec:
+      containers:
+        - name: gateway-api
+          image: davidazael/micro-api:gateway_api
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      imagePullSecrets:
+        - name: docker-reg
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: config-nginx

@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: tourney-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /assoc
+            backend:
+              serviceName: assoc-svc
+              servicePort: 80
+    - http:
+        paths:
+          - path: /tourneys
+            backend:
+              serviceName: tournament-svc
+              servicePort: 80
+    - http:
+        paths:
+          - path: /users
+            backend:
+              serviceName: users-svc
+              servicePort: 80

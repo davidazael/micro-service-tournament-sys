@@ -1,3 +1,4 @@
+/.vim
 /.vscode 
 **/.dockerignore 
 
@@ -9,8 +10,7 @@
 *.sh
 
 **/__pycache__/**
-
-*.json
+*.pyc
 
 # Flask 
 instance/

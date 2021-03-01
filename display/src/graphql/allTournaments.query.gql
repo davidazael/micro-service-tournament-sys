@@ -1,0 +1,10 @@
+query tournamentsList {
+  tournamentList {
+    edges {
+      node {
+        id
+        name
+      }
+    }
+  }
+}

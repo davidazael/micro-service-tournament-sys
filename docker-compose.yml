@@ -1,8 +1,6 @@
 version: "3.7"
 
-
 services:
-
   association:
     build: ./association_tourneys_users
     container_name: association
@@ -32,10 +30,31 @@ services:
         target: /src
     environment:
       - APP_NAME=users_crud_api
-    
+
+  vuedisplay:
+    build: ./display
+    container_name: vue_display
+    depends_on:
+      - apigateway
+      - association
+      - tourneycrud
+      - usercrud
+    ports:
+      - 8080:80
+    restart: on-failure
+    volumes:
+      - "./display:/app"
+    environment:
+      - APP_NAME=vue_display_api
+
   apigateway:
-    build: ./api_gateway
+    image: nginx:1.17.10
     container_name: api_gateway
+    depends_on:
+      - association
+      - tourneycrud
+      - usercrud
+    volumes:
+      - ./api_gateway/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 80:80
-      - 443:443

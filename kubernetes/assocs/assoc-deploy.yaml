@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assoc
+  labels:
+    app: tourney
+    type: db
+    part-of: tournament-api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: assoc
+      type: db
+      part-of: tournament-api
+  template:
+    metadata:
+      name: assoc
+      labels:
+        app: assoc
+        type: db
+        part-of: tournament-api
+    spec:
+      containers:
+        - name: assoc-api
+          image: davidazael/micro-api:assoc_api
+          imagePullPolicy: Always
+          command: ["uwsgi", "app.ini"]
+          envFrom:
+            - configMapRef:
+                name: assoc-config
+          ports:
+            - containerPort: 8000
+      imagePullSecrets:
+        - name: docker-reg

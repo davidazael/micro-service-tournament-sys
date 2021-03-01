@@ -30,7 +30,7 @@ services:
         target: /src
     environment:
       - APP_NAME=users_crud_api
-
+    
   vuedisplay:
     build: ./display
     container_name: vue_display

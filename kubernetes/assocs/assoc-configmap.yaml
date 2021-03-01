@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: assoc-config
+  labels:
+    app: tournament
+data:
+  URL: "165.227.241.55"

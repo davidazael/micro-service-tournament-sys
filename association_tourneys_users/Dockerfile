@@ -2,7 +2,7 @@ FROM python:3.7-slim
 
 WORKDIR /src
 
-ADD . /src
+COPY . /src
 
 RUN set -ex \
     && BUILD_DEPS=" \

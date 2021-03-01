@@ -1,0 +1,6 @@
+query singleUser {
+  user(id: "VXNlcjox") {
+    id
+    name
+  }
+}

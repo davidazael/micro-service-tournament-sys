@@ -1,40 +1,36 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
-  {{ message }}
-  <ul>
-    <li v-for="u in showUsers" :key="u.node.id">
-      <h6>{{ u.node.name }}</h6>
-    </li>
-  </ul>
+  <NavBar>
+    <router-view />
+  </NavBar>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import { ref } from 'vue'
-import { useQuery, useResult, useMutation } from '@vue/apollo-composable'
-// import allCharactersQuery from './graphql/allCharacters.query.gql'
-import allUsersQuery from './graphql/allUsers.query.gql'
-// import allTournamentsQuery from './graphql/allTournaments.query.gql'
-// import UserByIdQuery from './graphql/UserById.query.gql'
+import NavBar from './components/layouts/NavBar.vue'
+import Toast from 'primevue/toast'
+import { useRouter } from 'vue-router'
+import Button from 'primevue/button'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
+    NavBar,
+    Button,
+    Toast,
   },
   setup() {
-    const message = ref('Hello David!')
-    const { result, error, loading } = useQuery(allUsersQuery)
-    // const { getUser } = useQuery(UserByIdQuery)
-    // const { getTournaments } = useQuery(allTournamentsQuery)
-    if (error) console.log('Error: ' + error.value)
-    if (loading || !result) console.log('Loading: ' + loading.value)
-    const showUsers = useResult(result, undefined, data => data.usersList.edges)
-    // const showTournaments = useResult( getTournaments, null, data => data.tournamentList)
-    /*const showCharacters = useResult( result, null, data => data.characters.results)*/
+    const router = useRouter()
 
-    return { message, showUsers }
+    // const allRoutes = ['root', 'about', 'helloworld', 'test']
+    const allRoutes = router.getRoutes().filter(x => x.name !== undefined)
+
+    function goTo(path) {
+      router.push(path)
+    }
+
+    return {
+      goTo,
+      allRoutes,
+    }
   },
 }
 </script>

@@ -30,7 +30,7 @@ services:
         target: /src
     environment:
       - APP_NAME=users_crud_api
-    
+
   vuedisplay:
     build: ./display
     container_name: vue_display
@@ -44,6 +44,7 @@ services:
     restart: on-failure
     volumes:
       - "./display:/app"
+      - "/app/node_modules"
     environment:
       - APP_NAME=vue_display_api
 

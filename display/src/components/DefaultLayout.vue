@@ -4,8 +4,6 @@
   </div>
   <div>
     <div class="p-d-flex p-p-3 card">
-      <SideBar type="Button" class="p-mr-2" />
-
       <Button type="Button" icon="pi pi-check" class="p-mr-2" />
       <Button type="Button" icon="pi pi-trash" class="p-button-danger" />
       <Button
@@ -30,12 +28,10 @@
 
 <script>
 import Button from 'primevue/button'
-import SideBar from '../components/layouts/SideBar.vue'
 
 export default {
   components: {
     Button,
-    SideBar,
   },
 }
 </script>
